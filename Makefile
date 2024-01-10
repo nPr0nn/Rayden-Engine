@@ -28,15 +28,18 @@ PLUGIN_SRC := hotreload/guest.c core.c
 HOST_BIN   := hot
 PLUGIN_BIN := libcore.so
 
+hotrun:
+	cd $(BUILD_DIR)/linux && ./hot
+	
 hotreload: $(HOST_BIN) $(PLUGIN_BIN)
 
 $(HOST_BIN): $(HOST_SRC)
 	$(CXX) -o $@ $^ $(LIBS) -lpthread $(CFLAGS)
 
-
 $(PLUGIN_BIN): $(PLUGIN_SRC)
 	$(CC) -shared -fPIC -o $@ $^ $(LIBS) $(CFLAGS)
-
+	mv *.so builds/linux && mv hot builds/linux
+	
 #----------------- web
 web: $(BUILD_DIR)/web/config/index.html
 
@@ -53,11 +56,8 @@ $(BUILD_DIR)/web/config/CMakeCache.txt: | $(BUILD_DIR)/web/config
 $(BUILD_DIR)/linux $(BUILD_DIR)/web/config:
 	mkdir -p $@
 
-#----------------- cleaning
+#----------------- cleaning	
 clean:
-	rm *.so hot
-	
-clean_app:
 	rm -rf $(BUILD_DIR)/linux/*
 
 clean_web:

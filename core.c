@@ -16,8 +16,8 @@ void core_start(void)
 void core_loop(void* args)
 { 
   BeginDrawing();
-    ClearBackground(BLUE);
-    DrawText("Let's GOOOOO", 190, 200, 20, RED);
+    ClearBackground(BLACK);
+    DrawText("Let's GOOOOO", 190, 200, 20, WHITE);
   EndDrawing();
 }
 
