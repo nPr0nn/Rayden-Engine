@@ -1,6 +1,5 @@
 
 #include "core.h"
-#include "thirdparty/include/raylib/raylib.h"
 
 // starting engine routines
 void core_start(void)
@@ -9,19 +8,17 @@ void core_start(void)
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
   #endif
 
-  InitWindow(800, 450, "Rayden Game Engine");
+  InitWindow(800, 600, "Rayden Game Engine");
   SetTargetFPS(60);   
 }
 
 // main engine loop
-void core_loop(void)
-{
-  
+void core_loop(void* args)
+{ 
   BeginDrawing();
-    ClearBackground(BLACK);
-    DrawText("Let's ball", 190, 200, 20, RED);
+    ClearBackground(BLUE);
+    DrawText("Let's GOOOOO", 190, 200, 20, RED);
   EndDrawing();
-
 }
 
 // ending engine routine 

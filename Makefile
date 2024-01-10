@@ -1,8 +1,8 @@
 
-CC        = gcc
+CC        = clang
 CXX       = g++
-CFLAGS    = -m32
-LIBS      = -Lthirdparty/include/raylib -lraylib -lm -ldl
+CFLAGS    = -ldl
+LIBS      = -lm -Lpath/to/raylib/lib -Wl,--whole-archive -lraylib -Wl,--no-whole-archive
 BUILD_DIR = builds
 
 .PHONY: run app web clean
@@ -17,10 +17,25 @@ app: $(BUILD_DIR)/linux/app
 
 $(BUILD_DIR)/linux/app: $(APP_SRC) | $(BUILD_DIR)/linux
 	$(CC) -o $@ $^ $(LIBS) $(CFLAGS)
-
 	
 #----------------- hotreload
 #TODO: Implement 
+
+HOST_SRC   := hotreload/host.cpp core.c
+PLUGIN_SRC := hotreload/guest.c core.c
+
+# Output binaries
+HOST_BIN   := hot
+PLUGIN_BIN := libcore.so
+
+hotreload: $(HOST_BIN) $(PLUGIN_BIN)
+
+$(HOST_BIN): $(HOST_SRC)
+	$(CXX) -o $@ $^ $(LIBS) -lpthread $(CFLAGS)
+
+
+$(PLUGIN_BIN): $(PLUGIN_SRC)
+	$(CC) -shared -fPIC -o $@ $^ $(LIBS) $(CFLAGS)
 
 #----------------- web
 web: $(BUILD_DIR)/web/config/index.html
@@ -31,7 +46,7 @@ $(BUILD_DIR)/web/config/index.html: $(BUILD_DIR)/web/config/CMakeCache.txt | $(B
 	emrun $(BUILD_DIR)/web/index.html
 
 $(BUILD_DIR)/web/config/CMakeCache.txt: | $(BUILD_DIR)/web/config
-	cd $(BUILD_DIR)/web/config && emcmake cmake ../../.. -DPLATFORM=Web -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXE_LINKER_FLAGS="-s USE_GLFW=3" -DCMAKE_EXECUTABLE_SUFFIX=".js"
+	cd $(BUILD_DIR)/web/config && emcmake cmake .. -DPLATFORM=Web -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXE_LINKER_FLAGS="-s USE_GLFW=3" -DCMAKE_EXECUTABLE_SUFFIX=".js"
 
 #----------------- create folders
 
